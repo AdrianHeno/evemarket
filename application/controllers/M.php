@@ -32,7 +32,7 @@ class M extends CI_Controller {
 		return $this->get_cres($url);
 	}
 	
-	function market_volume($region = "10000030", $item = "20211"){
+	function market_volume($region = "10000030", $item = "20211"){//Check the history of an item in a region to see how many items move in a week
 		$last_week = strtotime("-1 week");
 		$url = "https://crest-tq.eveonline.com/market/{$region}/history/?type=https://crest-tq.eveonline.com/inventory/types/$item/";
 		$volume = $this->get_cres($url);
@@ -47,11 +47,11 @@ class M extends CI_Controller {
 			$result['total_volume'] = $s;
 			$result['days_of_sale'] = $i;
 		}
-		var_dump($result);
+		return $result;
 	}
 	
-	function region_trade(){
-		set_time_limit(240);
+	function region_trade(){//move through an array of market ids, look up each one in the 2 regions we are compairing against and gather the min sell in each
+		set_time_limit(600);
 		$items = array('12484', '12487', '20212', '25718', '20211', '12203', '12209', '12205', '12212', '12215', '12207', '10155', '15477', '9950',
 					   '13234', '13260', '13261', '3265', '13216', '13225', '13166', '13223', '13218', '13245', '13226', '27186', '19202');
 		//$items = array('12484', '12487');
@@ -73,8 +73,9 @@ class M extends CI_Controller {
 			}
 			
 			$prices_array[$item]['10000030'] = min($s_price);
-			$prices_array[$item]['margin'] = $prices_array[$item]['10000030'] - $prices_array[$item]['10000002'];
-			$prices_array[$item]['percentage'] = (100 / $prices_array[$item]['10000002']) * $prices_array[$item]['margin'];
+			$prices_array[$item]['margin'] = $prices_array[$item]['10000030'] - $prices_array[$item]['10000002'];//What is the total proffit per item
+			$prices_array[$item]['percentage'] = (100 / $prices_array[$item]['10000002']) * $prices_array[$item]['margin']; //Proffit as a percentage of item value
+			$prices_array[$item]['movement'] = $this->market_volume('10000030', $item);
 		}
 		
 		$data['prices'] = $prices_array;

@@ -16,6 +16,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.3.js" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+	$('.table').DataTable();
+    } );
+</script>
 </head>
 <body>
     <div class="container">
@@ -37,6 +44,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							<th>Heimatar Price</th>
 							<th>Margin</th>
 							<th>%</th>
+							<th>Weekly Volume</th>
+							<th>Days of Sale</th>
 						</tr>
 						<?php
 							foreach($prices as $price){
@@ -47,6 +56,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							<td><?php echo number_format($price['10000030'], 2)?></td>
 							<td><?php echo number_format($price['margin'], 2)?></td>
 							<td><?php echo number_format($price['percentage'], 2)?></td>
+							<td><?php echo $price['movement']['total_volume']?></td>
+							<td><?php echo $price['movement']['days_of_sale']?></td>
 						</tr>
 						<?php								
 							}
