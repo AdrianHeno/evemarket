@@ -24,7 +24,7 @@ class M extends CI_Controller {
 		
 		$data = (curl_exec($curl));
 		
-		return $data;
+		return json_decode($data);
 	}
 	
 	private function market_region($region, $item, $type = "sell"){//Build a GET string to select all orders buy/sell for an item in a region
@@ -33,13 +33,34 @@ class M extends CI_Controller {
 	}
 	
 	function region_trade(){
-		//$items = array('12484', '12487', '20212', '25718', '20211', '12203', '12209', '12205', '12212', '12215', '12207');
-		$items = array('12484', '12487');
+		set_time_limit(120);
+		$items = array('12484', '12487', '20212', '25718', '20211', '12203', '12209', '12205', '12212', '12215', '12207');
+		//$items = array('12484', '12487');
 		
-		foreach($items as $item){//get data for each item in the forge
-			$first = $this->market_region('10000002', $item, 'sell');
-			print_r($first);
+		$prices_array = array();
+		foreach($items as $item){
+			$first = $this->market_region('10000002', $item, 'sell');//find min price for item in the forge
+			$f_price = array();
+			foreach($first->items as $f){
+				$f_price[] = $f->price;
+			}
+			$prices_array[$item]['name'] = $f->type->name;
+			$prices_array[$item]['10000002'] = min($f_price);
+			
+			$second = $this->market_region('10000030', $item, 'sell');//find min price for item in heimatar
+			$s_price = array();
+			foreach($second->items as $s){
+				$s_price[] = $s->price;
+			}
+			
+			$prices_array[$item]['10000030'] = min($s_price);
+			$prices_array[$item]['margin'] = $prices_array[$item]['10000030'] - $prices_array[$item]['10000002'];
+			$prices_array[$item]['percentage'] = (100 / $prices_array[$item]['10000002']) * $prices_array[$item]['margin'];
 		}
+		
+		$data['prices'] = $prices_array;
+		$data['base_url'] = $this->config->item('base_url');
+		$this->load->view('region_trading', $data);
 	}
 	
 }
