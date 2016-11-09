@@ -32,9 +32,28 @@ class M extends CI_Controller {
 		return $this->get_cres($url);
 	}
 	
+	function market_volume($region = "10000030", $item = "20211"){
+		$last_week = strtotime("-1 week");
+		$url = "https://crest-tq.eveonline.com/market/{$region}/history/?type=https://crest-tq.eveonline.com/inventory/types/$item/";
+		$volume = $this->get_cres($url);
+		$result = array();
+		$i = 0;
+		$s = 0;
+		foreach($volume->items as $v){
+			if(strtotime($v->date) > $last_week ){
+				++ $i;
+				$s = $s + $v->volume;
+			}
+			$result['total_volume'] = $s;
+			$result['days_of_sale'] = $i;
+		}
+		var_dump($result);
+	}
+	
 	function region_trade(){
-		set_time_limit(120);
-		$items = array('12484', '12487', '20212', '25718', '20211', '12203', '12209', '12205', '12212', '12215', '12207');
+		set_time_limit(240);
+		$items = array('12484', '12487', '20212', '25718', '20211', '12203', '12209', '12205', '12212', '12215', '12207', '10155', '15477', '9950',
+					   '13234', '13260', '13261', '3265', '13216', '13225', '13166', '13223', '13218', '13245', '13226', '27186', '19202');
 		//$items = array('12484', '12487');
 		
 		$prices_array = array();
