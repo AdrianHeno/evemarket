@@ -50,6 +50,12 @@ class M extends CI_Controller {
 		return $result;
 	}
 	
+	function get_items($groupID){
+		$this->load->model('Invtypes_model');
+		
+		
+	}
+	
 	function region_trade(){//move through an array of market ids, look up each one in the 2 regions we are compairing against and gather the min sell in each
 		set_time_limit(600);
 		$items = array('12484', '12487', '20212', '25718', '20211', '12203', '12209', '12205', '12212', '12215', '12207', '10155', '15477', '9950',
@@ -58,24 +64,28 @@ class M extends CI_Controller {
 		
 		$prices_array = array();
 		foreach($items as $item){
-			$first = $this->market_region('10000002', $item, 'sell');//find min price for item in the forge
-			$f_price = array();
-			foreach($first->items as $f){
-				$f_price[] = $f->price;
+			$volume_check = $this->market_volume('10000030', $item);
+			if($volume_check['days_of_sale'] > 3){//Check if the item has enough movement for us to bother checking prices
+				$first = $this->market_region('10000002', $item, 'sell');//find min price for item in the forge
+				$f_price = array();
+				foreach($first->items as $f){
+					$f_price[] = $f->price;
+				}
+				$prices_array[$item]['name'] = $f->type->name;
+				$prices_array[$item]['10000002'] = min($f_price);
+				
+				$second = $this->market_region('10000030', $item, 'sell');//find min price for item in heimatar
+				$s_price = array();
+				foreach($second->items as $s){
+					$s_price[] = $s->price;
+				}
+				
+				$prices_array[$item]['10000030'] = min($s_price);
+				$prices_array[$item]['margin'] = $prices_array[$item]['10000030'] - $prices_array[$item]['10000002'];//What is the total proffit per item
+				$prices_array[$item]['percentage'] = (100 / $prices_array[$item]['10000002']) * $prices_array[$item]['margin']; //Proffit as a percentage of item value
+				$prices_array[$item]['movement'] = $volume_check;
 			}
-			$prices_array[$item]['name'] = $f->type->name;
-			$prices_array[$item]['10000002'] = min($f_price);
 			
-			$second = $this->market_region('10000030', $item, 'sell');//find min price for item in heimatar
-			$s_price = array();
-			foreach($second->items as $s){
-				$s_price[] = $s->price;
-			}
-			
-			$prices_array[$item]['10000030'] = min($s_price);
-			$prices_array[$item]['margin'] = $prices_array[$item]['10000030'] - $prices_array[$item]['10000002'];//What is the total proffit per item
-			$prices_array[$item]['percentage'] = (100 / $prices_array[$item]['10000002']) * $prices_array[$item]['margin']; //Proffit as a percentage of item value
-			$prices_array[$item]['movement'] = $this->market_volume('10000030', $item);
 		}
 		
 		$data['prices'] = $prices_array;
