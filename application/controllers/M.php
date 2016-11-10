@@ -52,7 +52,17 @@ class M extends CI_Controller {
 	
 	function get_items($groupID){
 		$this->load->model('Invtypes_model');
-		
+		var_dump($groupID);
+		foreach($groupID as $id){
+			$result = $this->Invtypes_model->get_by_groupid($id);
+			foreach($result as $r){
+				if(!empty($r)){
+					$itemIDs[$r->typeID] = $r->typeName;
+				}	
+			}
+		}
+		var_dump($itemIDs);
+		die();
 		
 	}
 	
@@ -61,6 +71,7 @@ class M extends CI_Controller {
 		$items = array('12484', '12487', '20212', '25718', '20211', '12203', '12209', '12205', '12212', '12215', '12207', '10155', '15477', '9950',
 					   '13234', '13260', '13261', '3265', '13216', '13225', '13166', '13223', '13218', '13245', '13226', '27186', '19202');
 		//$items = array('12484', '12487');
+		$this->get_items(array(330, 329));
 		
 		$prices_array = array();
 		foreach($items as $item){

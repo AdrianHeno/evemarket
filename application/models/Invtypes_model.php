@@ -31,8 +31,8 @@ class Invtypes_model extends CI_Model
 	
 	function get_by_groupid($groupID)
     {
-        $this->db->where($this->groupID, $groupID);
-        return $this->db->get($this->table)->row();
+        $this->db->where('groupID', $groupID);
+        return $this->db->get($this->table)->result();
     }
     
     // get total rows
