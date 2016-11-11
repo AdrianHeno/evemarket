@@ -70,7 +70,7 @@ class M extends CI_Controller {
 					   '13234', '13260', '13261', '3265', '13216', '13225', '13166', '13223', '13218', '13245', '13226', '27186', '19202');
 		//$items = array('12484', '12487');*/
 		$items = $this->get_items(array(109,
-83,
+/*83,
 84,
 85,
 86,
@@ -357,11 +357,11 @@ class M extends CI_Controller {
 902,
 906,
 941,
-963,
+963,*/
 1022,
 255,
 256,
-257,
+257,/*
 258,
 266,
 268,
@@ -379,12 +379,13 @@ class M extends CI_Controller {
 955,
 956,
 957,
-958));
+958*/));
 		
 		$prices_array = array();
-
+		
 		foreach($items as $item => $value){
 			$volume_check = $this->market_volume('10000030', $item);
+
 			if($volume_check['days_of_sale'] > 3){//Check if the item has enough movement for us to bother checking prices
 				$first = $this->market_region('10000002', $item, 'sell');//find min price for item in the forge
 				$f_price = array();
