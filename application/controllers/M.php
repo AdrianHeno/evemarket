@@ -52,7 +52,6 @@ class M extends CI_Controller {
 	
 	function get_items($groupID){
 		$this->load->model('Invtypes_model');
-		var_dump($groupID);
 		foreach($groupID as $id){
 			$result = $this->Invtypes_model->get_by_groupid($id);
 			foreach($result as $r){
@@ -61,141 +60,16 @@ class M extends CI_Controller {
 				}	
 			}
 		}
-		var_dump($itemIDs);
-		die();
+		return $itemIDs;
 		
 	}
 	
 	function region_trade(){//move through an array of market ids, look up each one in the 2 regions we are compairing against and gather the min sell in each
-		set_time_limit(600);
+		set_time_limit(6000);
 		/*$items = array('12484', '12487', '20212', '25718', '20211', '12203', '12209', '12205', '12212', '12215', '12207', '10155', '15477', '9950',
 					   '13234', '13260', '13261', '3265', '13216', '13225', '13166', '13223', '13218', '13245', '13226', '27186', '19202');
 		//$items = array('12484', '12487');*/
-		$item = $this->get_items(array(105,
-106,
-107,
-108,
-109,
-110,
-111,
-118,
-119,
-120,
-121,
-123,
-126,
-127,
-128,
-129,
-130,
-131,
-132,
-133,
-134,
-135,
-136,
-137,
-139,
-140,
-141,
-142,
-143,
-145,
-147,
-148,
-151,
-152,
-154,
-156,
-157,
-158,
-160,
-161,
-162,
-163,
-165,
-166,
-167,
-168,
-169,
-170,
-172,
-174,
-175,
-176,
-177,
-178,
-218,
-223,
-224,
-296,
-342,
-343,
-344,
-345,
-346,
-347,
-348,
-349,
-350,
-352,
-356,
-360,
-371,
-400,
-401,
-408,
-410,
-447,
-477,
-478,
-486,
-487,
-489,
-490,
-503,
-504,
-516,
-525,
-532,
-535,
-537,
-643,
-651,
-718,
-722,
-723,
-724,
-725,
-726,
-727,
-787,
-841,
-853,
-854,
-855,
-856,
-857,
-858,
-859,
-860,
-870,
-871,
-888,
-889,
-890,
-891,
-912,
-914,
-915,
-917,
-918,
-944,
-945,
-965,
-973,
-996,
-1013,
+		$items = $this->get_items(array(109,
 83,
 84,
 85,
@@ -508,7 +382,8 @@ class M extends CI_Controller {
 958));
 		
 		$prices_array = array();
-		foreach($items as $item){
+
+		foreach($items as $item => $value){
 			$volume_check = $this->market_volume('10000030', $item);
 			if($volume_check['days_of_sale'] > 3){//Check if the item has enough movement for us to bother checking prices
 				$first = $this->market_region('10000002', $item, 'sell');//find min price for item in the forge
