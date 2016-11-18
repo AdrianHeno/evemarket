@@ -64,7 +64,53 @@ class M extends CI_Controller {
 			}
 		}
 		return $itemIDs;
+	}
+	
+	function store_region_trades($from_region = 10000002, $to_region = 10000030){
+		set_time_limit(6000);
+		$this->load->model('Trading_model');
+		$items = $this->get_items(array(/*109,
+83,84,*/85,/*86,87,88,89,90,372,373,374,375,376,377,384,385,386,387,394,395,396,425,476,479,482,492,497,498,500,548,648,
+653,654,655,656,657,663,772,863,864,892,907,908,909,910,911,916,972,976,1010,1019,728,729,730,731,979,361,97,100,101,
+299,470,544,545,549,639,640,641,1023,300,303,304,721,738,739,740,741,742,743,744,745,746,747,748,749,750,751,783,935,
+17,18,20,422,423,427,428,429,712,754,886,966,967,974,38,39,40,41,43,46,47,48,49,52,53,54,55,56,57,59,60,61,62,63,65,
+67,68,71,72,74,76,77,78,80,82,96,98,201,202,203,205,208,209,210,211,212,213,225,285,289,290,291,295,302,308,309,315,
+316,317,321,325,326,328,329,330,338,339,341,353,357,367,378,379,405,406,407,464,472,475,481,483,499,501,506,507,508,
+509,510,511,512,514,515,518,524,538,546,585,586,588,589,590,638,642,644,645,646,647,650,658,660,737,753,762,763,764,
+765,766,767,768,769,770,771,773,774,775,776,777,778,779,780,781,782,786,815,842,862,878,896,899,901,904,905,661,662,
+881,882,977,25,26,27,28,29,30,31,237,324,358,380,381,419,420,463,485,513,540,541,543,547,659,830,831,832,833,834,883,
+893,894,898,900,902,906,941,963,1022,255,256,257,258,266,268,269,270,271,272,273,274,275,278,505,989,954,955,956,957,
+958*/));
 		
+		foreach($items as $item => $value){
+			$stored_market_data = $this->Trading_model->get_by_itemid($item);
+			var_dump($stored_market_data);
+			die();
+			
+			$volume_check = $this->market_volume($to_region, $item);
+			
+			$first = $this->market_region($from_region, $item, 'sell');//find min price for item in the forge
+			$f_price = array();
+			foreach($first->items as $f){
+				$f_price[] = $f->price;
+			}
+			$prices_array[$item]['name'] = $f->type->name;
+			$prices_array[$item][$from_region] = min($f_price);
+			
+			$second = $this->market_region($to_region, $item, 'sell');//find min price for item in heimatar
+			$s_price = array();
+			foreach($second->items as $s){
+				$s_price[] = $s->price;
+			}
+			
+			$prices_array[$item][$to_region] = min($s_price);
+			$prices_array[$item]['margin'] = $prices_array[$item][$from_region] - $prices_array[$item][$to_region];//What is the total proffit per item
+			$prices_array[$item]['percentage'] = (100 / $prices_array[$item][$to_region]) * $prices_array[$item]['margin']; //Proffit as a percentage of item value
+			$prices_array[$item]['movement'] = $volume_check;
+						
+		}
+		
+		var_dump($prices_array);
 	}
 	
 	function region_trade(){//move through an array of market ids, look up each one in the 2 regions we are compairing against and gather the min sell in each
