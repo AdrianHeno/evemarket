@@ -14,7 +14,7 @@ class Trading extends CI_Controller
 
     public function index()
     {
-        $trading = $this->Trading_model->get_all();
+        $trading = $this->Trading_model->get_all_min_days();
 
         $data = array(
             'trading_data' => $trading

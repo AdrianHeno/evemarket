@@ -21,6 +21,13 @@ class Trading_model extends CI_Model
         $this->db->order_by($this->id, $this->order);
         return $this->db->get($this->table)->result();
     }
+	
+	function get_all_min_days()
+    {
+		$this->db->where('days >', 1);
+        $this->db->order_by($this->id, $this->order);
+        return $this->db->get($this->table)->result();
+    }
 
     // get data by id
     function get_by_id($id)
@@ -33,6 +40,14 @@ class Trading_model extends CI_Model
     {
         $this->db->where('item_id', $itemID);
         return $this->db->get($this->table)->result();
+    }
+	
+	function get_item_in_region_pair($itemID, $from_region, $to_region)
+    {
+        $this->db->where('item_id', $itemID);
+		$this->db->where('from_region', $from_region);
+		$this->db->where('to_region', $to_region);
+        return $this->db->get($this->table)->row();
     }
     
     // get total rows
