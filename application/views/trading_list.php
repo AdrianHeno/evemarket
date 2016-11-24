@@ -54,9 +54,9 @@
 		    <td><?php echo $trading->to_region ?></td>
 		    <td><?php echo $trading->item_id ?></td>
 		    <td><?php echo $trading->name ?></td>
-		    <td><?php echo $trading->from_price ?></td>
-		    <td><?php echo $trading->to_price ?></td>
-		    <td><?php echo $trading->margin ?></td>
+		    <td><?php echo number_format($trading->from_price, 2) ?></td>
+		    <td><?php echo number_format($trading->to_price, 2) ?></td>
+		    <td><?php echo number_format($trading->margin, 2) ?></td>
 		    <td><?php echo $trading->percentage ?></td>
 		    <td><?php echo $trading->volume ?></td>
 		    <td><?php echo $trading->days ?></td>
