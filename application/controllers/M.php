@@ -85,8 +85,8 @@ class M extends CI_Controller {
 		foreach($items as $item => $value){
 			$stored_market_data = $this->Trading_model->get_item_in_region_pair($item, $from_region, $to_region);//Check if we already have an entry for this item and region combination
 
-			if($stored_market_data == NULL OR  $stored_market_data->last_modified < (time() - 86400)){//Does it exist and is its value less than today - 1 day
-				if(isset($stored_market_data->id) && $stored_market_data->last_modified < (time() - 86400)){//If it already exists and its time stamp is more than a day old delete the entry
+			if($stored_market_data == NULL OR  $stored_market_data->last_modified < (time() - 172800)){//Does it exist and is its value less than today - 2 day
+				if(isset($stored_market_data->id) && $stored_market_data->last_modified < (time() - 172800)){//If it already exists and its time stamp is more than a day old delete the entry
 					$this->Trading_model->delete($stored_market_data->id);
 				}
 				$volume_check = $this->market_volume($to_region, $item);
@@ -124,8 +124,9 @@ class M extends CI_Controller {
 						'days' => $prices_array[$item]['movement']['days_of_sale'],
 						'last_modified' => time(),
 					);
-				
+				if(isset($data['name']) && isset($data['from_price']) && isset($data['to_price'])){
 					$this->Trading_model->insert($data);//Insert to DB
+				}
 				//}
 			}		
 		}
