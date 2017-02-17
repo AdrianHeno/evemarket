@@ -126,6 +126,8 @@ class M extends CI_Controller {
 					);
 				if(isset($data['name']) && isset($data['from_price']) && isset($data['to_price'])){
 					$this->Trading_model->insert($data);//Insert to DB
+//TODO: Add a check to see if the entry already exists in the data base to switch between insert and update
+					//$this->Trading_model->insert($data);//Insert to DB
 				}
 				//}
 			}		
